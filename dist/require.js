@@ -82,19 +82,18 @@
          * @memberof Module
          */
         set STATUS(status) {
+            this._STATUS = status;
             if (status === STATUS.ERROR) {
                 for (let value of this._task) {
                     typeof value === 'string' && this._context.moduleMap.get(value).applyCallback(status, this._errorEvent);
                     typeof value === 'number' && this._context.taskMap.get(value).applyCallback(status, this._errorEvent);
                 }
-                this._task = [];
             }
             else if (status === STATUS.SUCCESS) {
                 for (let value of this._task) {
                     typeof value === 'string' && this._context.moduleMap.get(value).applyCallback(status);
                     typeof value === 'number' && this._context.taskMap.get(value).applyCallback(status, this._export);
                 }
-                this._task = [];
             }
             if (status === STATUS.READY) {
                 try {
@@ -118,7 +117,6 @@
                     }
                 }
             }
-            this._STATUS = status;
         }
         get STATUS() {
             return this._STATUS;
@@ -218,6 +216,7 @@
          */
         set depsCounts(depsCount) {
             if (depsCount === 0) {
+                this._depsCount = 0;
                 let deps = [];
                 for (let value of this._deps) {
                     deps.push(this._context.moduleMap.get(value).getExport());
@@ -318,6 +317,7 @@
         }
         else {
             module = new Module(moduleMap, context);
+            moduleMap.set(name, module);
         }
         module.init(name, deps, callback, error);
         module.exec();
